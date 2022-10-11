@@ -68,9 +68,165 @@ he = nans[Math.floor(Math.random() * nans.length)]
  return he
 }
 
+/////////
+//////////////[ API'S DE YOUTUBE ]///////
+/////////
+
+router.get('/youtube/playmp3', async(req, res, next) => {
+apikey = req.query.apikey;
+q = req.query.q
+if(apikey !== key) return res.json(resposta.semkey)
+if (!q) return res.json({ status : false, criador : `criador`, mensagem : "Coloque o parametro: q"})
+PlayAudio(q).then((resultado) => {
+res.json({
+status: true,
+código: 200,
+criador: `${criador}`,
+resultado: resultado
+})}).catch(e => {
+res.json({
+msg: `erro no servidor interno`
+})})})
+
+router.get('/youtube/playmp4', async(req, res, next) => {
+apikey = req.query.apikey;
+q = req.query.q
+if(apikey !== key) return res.json(resposta.semkey)
+if (!q) return res.json({ status : false, criador : `criador`, mensagem : "Coloque o parametro: q"})
+PlayVideo(q).then((resultado) => {
+res.json({
+status: true,
+código: 200,
+criador: `${criador}`,
+resultado: resultado
+})}).catch(e => {
+res.json({
+msg: `erro no servidor interno`
+})})})
+
+router.get('/youtube/mp3', async(req, res, next) => {
+apikey = req.query.apikey;
+link = req.query.link
+if(apikey !== key) return res.json(resposta.semkey)
+if (!link) return res.json({ status : false, criador : `criador`, mensagem : "Coloque o parametro: LINK"})
+PlayLinkMP3(link).then((resultado) => {
+res.json({
+status: true,
+código: 200,
+criador: `${criador}`,
+resultado: resultado
+})}).catch(e => {
+res.json({
+msg: `erro no servidor interno`
+})})})
+
+router.get('/youtube/mp4', async(req, res, next) => {
+apikey = req.query.apikey;
+link = req.query.link
+if(apikey !== key) return res.json(resposta.semkey)
+if (!link) return res.json({ status : false, criador : `criador`, mensagem : "Coloque o parametro: LINK"})
+PlayLinkMP4(link).then((resultado) => {
+res.json({
+status: true,
+código: 200,
+criador: `${criador}`,
+resultado: resultado
+})}).catch(e => {
+res.json({
+msg: `erro no servidor interno`
+})})})
+
+router.get('/youtube/pesquisar', async(req, res, next) => {
+apikey = req.query.apikey;
+q = req.query.q
+if(apikey !== key) return res.json(resposta.semkey)
+if (!q) return res.json({ status : false, criador : `criador`, mensagem : "Coloque o parametro: q"})
+ytSearch(q).then(result => {
+res.json({
+status: true,
+código: 200,
+criador: `${criador}`,
+resultado: result
+})}).catch(e => {
+res.json({
+msg: `erro no servidor interno`
+})})})
+
+///////////
+//////////////[ API'S DE NSFW ]//////////
+///////////
+
+router.all('/nsfw/miakhalifa', async (req, res) => {
+apikey = req.query.apikey;
+if(apikey !== key) return res.json(resposta.semkey)
+json = JSON.parse(fs.readFileSync('database/nsfwmia.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('png')
+res.send(await getBuffer(random))
+})
+
+router.all('/nsfw/elisa-sanches', async (req, res) => {
+apikey = req.query.apikey;
+if(apikey !== key) return res.json(resposta.semkey)
+json = JSON.parse(fs.readFileSync('database/nsfwelisa.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('png')
+res.send(await getBuffer(random))
+})
+
+router.all('/nsfw/loli-masturbation', async (req, res) => {
+apikey = req.query.apikey;
+if(apikey !== key) return res.json(resposta.semkey)
+json = JSON.parse(fs.readFileSync('database/masturbation.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('png')
+res.send(await getBuffer(random))
+})
+
+router.all('/nsfw/loli-pussy', async (req, res) => {
+apikey = req.query.apikey;
+if(apikey !== key) return res.json(resposta.semkey)
+json = JSON.parse(fs.readFileSync('database/pussy.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('png')
+res.send(await getBuffer(random))
+})
+
+router.all('/nsfw/loli-gif', async (req, res) => {
+apikey = req.query.apikey;
+if(apikey !== key) return res.json(resposta.semkey)
+json = JSON.parse(fs.readFileSync('database/hnt_gifs.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('gif')
+res.send(await getBuffer(random))
+})
+
+router.all('/nsfw/loli-yuri', async (req, res) => {
+apikey = req.query.apikey;
+if(apikey !== key) return res.json(resposta.semkey)
+json = JSON.parse(fs.readFileSync('database/yuri.json').toString())
+random = json[Math.floor(Math.random() * json.length)]
+res.type('png')
+res.send(await getBuffer(random))
+})
+
 ///////////
 //////////////[ API'S DE DOWNLOADS ]///
 ///////////
+
+router.get('/download/tiktok2', async(req, res, next) => {
+var cdapikey = req.query.apikey;
+link = req.query.link
+if(!cdapikey) return res.json(resposta.semkey)
+if (!link) return res.json({ status : false, criador : `criador`, mensagem : "Coloque Um Link De Um Video Valido!"})
+hx.ttdownloader(link)
+.then(video => { res.json({
+  status: true,
+  código: 200,
+  criador: `${criador}`,
+    resultado: video
+})})
+});
 
 router.all('/download/tiktok', async(req, res, next) => {
 cdapikey = req.query.apikey
@@ -199,40 +355,44 @@ if(apikey !== key) return res.json(resposta.semkey)
 if (!txt) return res.json({ status : false, criador : `criador`, mensagem : "Coloque o parametro: texto"})
 getNicks = await Kibar(`https://isyubii.herokuapp.com/api/fazernick?nome=${txt}&apikey=key-free`)
 res.json({
-`${getNicks[0]}`,
-`${getNicks[1]}`,
-`${getNicks[2]}`,
-`${getNicks[3]}`,
-`${getNicks[4]}`,
-`${getNicks[5]}`,
-`${getNicks[6]}`,
-`${getNicks[7]}`,
-`${getNicks[8]}`,
-`${getNicks[9]}`,
-`${getNicks[10]}`,
-`${getNicks[11]}`,
-`${getNicks[12]}`,
-`${getNicks[13]}`,
-`${getNicks[14]}`,
-`${getNicks[15]}`,
-`${getNicks[16]}`,
-`${getNicks[18]}`,
-`${getNicks[19]}`,
-`${getNicks[20]}`,
-`${getNicks[21]}`,
-`${getNicks[22]}`,
-`${getNicks[23]}`,
-`${getNicks[24]}`,
-`${getNicks[25]}`,
-`${getNicks[26]}`,
-`${getNicks[27]}`,
-`${getNicks[28]}`,
-`${getNicks[29]}`,
-`${getNicks[30]}`,
-`${getNicks[31]}`,
-`${getNicks[32]}`,
-`${getNicks[33]}`,
-`${getNicks[34]}`
+status: true,
+código: 999,
+criador: `${criador}`,
+resultado: {
+nicks1: `${getNicks[0]}`,
+nicks2: `${getNicks[1]}`,
+nicks3: `${getNicks[2]}`,
+nicks4: `${getNicks[3]}`,
+nicks5: `${getNicks[4]}`,
+nicks6: `${getNicks[5]}`,
+nicks7: `${getNicks[6]}`,
+nicks8: `${getNicks[7]}`,
+nicks9: `${getNicks[8]}`,
+nicks10: `${getNicks[9]}`,
+nicks11: `${getNicks[10]}`,
+nicks12: `${getNicks[11]}`,
+nicks13: `${getNicks[12]}`,
+nicks14: `${getNicks[13]}`,
+nicks15: `${getNicks[14]}`,
+nicks16: `${getNicks[15]}`,
+nicks17: `${getNicks[16]}`,
+nicks18: `${getNicks[18]}`,
+nicks19: `${getNicks[19]}`,
+nicks20: `${getNicks[20]}`,
+nicks21: `${getNicks[21]}`,
+nicks22: `${getNicks[22]}`,
+nicks23: `${getNicks[23]}`,
+nicks24: `${getNicks[24]}`,
+nicks25: `${getNicks[25]}`,
+nicks26: `${getNicks[26]}`,
+nicks27: `${getNicks[27]}`,
+nicks28: `${getNicks[28]}`,
+nicks29: `${getNicks[29]}`,
+nicks30: `${getNicks[30]}`,
+nicks31: `${getNicks[31]}`,
+nicks32: `${getNicks[32]}`,
+nicks33: `${getNicks[33]}`,
+nicks34: `${getNicks[34]}`}
 })
 })
 
